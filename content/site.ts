@@ -10,11 +10,11 @@ export const site = {
   description:
     "Kaiuf M — CSE (AI & ML) student building AI systems, RAG assistants, AR/VR experiences and games.",
   descriptor: "AI / ML engineer & creative technologist",
-  // TODO: replace placeholders with real handles.
-  email: "hello@example.com",
+  email: "mkkaiuf@gmail.com",
   github: "https://github.com/kaiuf3011",
-  linkedin: "https://linkedin.com/in/your-handle",
-  resume: "/Kaiuf_M_Resume.pdf",
+  linkedin: "https://www.linkedin.com/in/kaiuf-m-22437b38b/",
+  resume: "/resume",
+  resumePdf: "/Kaiuf_M_Resume.pdf",
   basedIn: "Coimbatore, India",
   // TODO: confirm this is true. Set to null to hide the status row entirely.
   status: "Open to internships and freelance" as string | null,

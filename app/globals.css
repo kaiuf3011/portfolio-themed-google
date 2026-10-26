@@ -414,3 +414,22 @@ html.booting:not(.booting-blank) body::after {
     radial-gradient(circle 8px at 8px 8px, var(--g-yellow) 97%, transparent) 56px 0 / 16px 16px no-repeat,
     radial-gradient(circle 8px at 8px 8px, var(--g-green) 97%, transparent) 84px 0 / 16px 16px no-repeat;
 }
+
+/* ---------- Print (the resume) ---------- */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .resume-paper {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}

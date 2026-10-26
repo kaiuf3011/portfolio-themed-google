@@ -21,7 +21,7 @@ const code = Google_Sans_Code({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://my-port-dun-one.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://portfolio-themed-google.vercel.app"),
   title: site.title,
   description: site.description,
   openGraph: { title: site.title, description: site.description, images: ["/images/kaiuf-mountain.jpg"] },

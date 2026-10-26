@@ -174,7 +174,7 @@ const APPS: AppItem[] = [
   { label: "Skills", icon: "note", color: "var(--g-yellow)", tab: "skills" },
   { label: "Ask Kaiuf", icon: "sparkle", color: "#9b72cb", tab: "ask" },
   { label: "Mail", icon: "mail", color: "var(--g-red)", action: "compose" },
-  { label: "Resume", icon: "doc", color: "var(--g-blue)", href: site.resume, external: true },
+  { label: "Resume", icon: "doc", color: "var(--g-blue)", href: site.resume },
   { label: "GitHub", icon: "github", color: "var(--on-surface)", href: site.github, external: true },
   { label: "LinkedIn", icon: "linkedin", color: "#0a66c2", href: site.linkedin, external: true },
 ];
@@ -262,7 +262,7 @@ export function ContactButton({ label = "Contact" }: { label?: string }) {
 
 export function ResumeLink() {
   return (
-    <Link href={site.resume} target="_blank" className="state soft hidden h-10 items-center rounded-full px-3 text-[14px] text-on-surface sm:inline-flex">
+    <Link href={site.resume} className="state soft hidden h-10 items-center rounded-full px-3 text-[14px] text-on-surface sm:inline-flex">
       Resume
     </Link>
   );
@@ -329,7 +329,7 @@ export function AccountButton() {
               >
                 Say hi
               </button>
-              <a href={site.resume} target="_blank" rel="noreferrer" className="state soft inline-flex h-10 items-center rounded-full border border-outline px-5 text-[14px] font-medium text-primary">
+              <a href={site.resume} className="state soft inline-flex h-10 items-center rounded-full border border-outline px-5 text-[14px] font-medium text-primary">
                 Resume
               </a>
             </div>

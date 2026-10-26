@@ -74,7 +74,7 @@ function Hire() {
         <button type="button" onClick={(e) => compose.open({ origin: e.currentTarget, subject: "Internship" })} className="state soft inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-[14px] font-medium text-on-primary">
           <Icon name="mail" size={18} /> Write to Kaiuf
         </button>
-        <a href={site.resume} target="_blank" rel="noreferrer" className="state soft inline-flex h-10 items-center gap-2 rounded-full border border-outline px-5 text-[14px] font-medium text-primary">
+        <a href={site.resume} className="state soft inline-flex h-10 items-center gap-2 rounded-full border border-outline px-5 text-[14px] font-medium text-primary">
           <Icon name="doc" size={18} /> Resume
         </a>
       </div>
@@ -84,12 +84,12 @@ function Hire() {
 
 function Resume() {
   return (
-    <a href={site.resume} target="_blank" rel="noreferrer" className="group flex items-center gap-4 p-5" data-cursor="Open">
+    <a href={site.resume} className="group flex items-center gap-4 p-5" data-cursor="Open">
       <span className="grid h-16 w-14 shrink-0 place-items-center rounded-sm bg-g-red text-[12px] font-medium text-white">PDF</span>
       <span className="min-w-0 flex-1">
         <span className="block text-[12px] text-result-url">kaiuf › resume</span>
-        <span className="draw-underline text-[20px] text-link">Kaiuf_M_Resume.pdf</span>
-        <span className="block text-[14px] text-on-surface-variant">AI / ML engineer in progress. Full-stack. XR & games. One page.</span>
+        <span className="draw-underline text-[20px] text-link">Kaiuf M — Resume</span>
+        <span className="block text-[14px] text-on-surface-variant">One page, Google-flavoured. View it here or download the PDF.</span>
       </span>
       <Icon name="open" size={22} className="text-on-surface-variant" />
     </a>

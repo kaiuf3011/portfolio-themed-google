@@ -20,7 +20,7 @@ export function Footer({ onBackToSearch }: { onBackToSearch?: () => void }) {
           <Link href="/?q=kaiuf+projects&tab=projects" className={link}>
             Projects
           </Link>
-          <a href={site.resume} target="_blank" rel="noreferrer" className={link}>
+          <a href={site.resume} className={link}>
             Resume
           </a>
           <a href={site.github} target="_blank" rel="noreferrer" className={link}>
