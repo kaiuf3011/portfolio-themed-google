@@ -1,26 +1,411 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ---------- Registered properties (so they can animate) ---------- */
+@property --rond {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* ---------- Tokens ---------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --g-blue: #4285f4;
+  --g-red: #ea4335;
+  --g-yellow: #fbbc04;
+  --g-green: #34a853;
+
+  --surface: #ffffff;
+  --surface-container: #f8f9fa;
+  --surface-container-high: #f1f3f4;
+  --surface-container-highest: #e8eaed;
+  --outline: #dadce0;
+  --on-surface: #202124;
+  --on-surface-variant: #5f6368;
+  --link: #1a0dab;
+  --result-url: #188038;
+
+  --primary: #1a73e8;
+  --on-primary: #ffffff;
+  --primary-container: #d3e3fd;
+  --on-primary-container: #041e49;
+
+  --tint-blue: #d2e3fc;
+  --tint-red: #fad2cf;
+  --tint-yellow: #feefc3;
+  --tint-green: #ceead6;
+  --note-white: #ffffff;
+
+  --shadow-search: 0 1px 6px rgba(32, 33, 36, 0.28);
+  --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.18), 0 1px 3px rgba(0, 0, 0, 0.12);
+  --scrim: rgba(32, 33, 36, 0.5);
+
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+  --ai-gradient: linear-gradient(90deg, #4285f4 0%, #9b72cb 50%, #d96570 100%);
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --surface: #131314;
+  --surface-container: #1e1f20;
+  --surface-container-high: #282a2c;
+  --surface-container-highest: #333537;
+  --outline: #444746;
+  --on-surface: #e3e3e3;
+  --on-surface-variant: #c4c7c5;
+  --link: #8ab4f8;
+  --result-url: #81c995;
+
+  --primary: #8ab4f8;
+  --on-primary: #062e6f;
+  --primary-container: #0842a0;
+  --on-primary-container: #d3e3fd;
+
+  --tint-blue: #1f3760;
+  --tint-red: #5c2b29;
+  --tint-yellow: #5c4a12;
+  --tint-green: #264d33;
+  --note-white: #2a2b2e;
+
+  --shadow-search: 0 1px 6px rgba(0, 0, 0, 0.6);
+  --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --scrim: rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-outline: var(--outline);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-link: var(--link);
+  --color-result-url: var(--result-url);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-primary-container: var(--primary-container);
+  --color-on-primary-container: var(--on-primary-container);
+  --color-g-blue: var(--g-blue);
+  --color-g-red: var(--g-red);
+  --color-g-yellow: var(--g-yellow);
+  --color-g-green: var(--g-green);
+  --color-tint-blue: var(--tint-blue);
+  --color-tint-red: var(--tint-red);
+  --color-tint-yellow: var(--tint-yellow);
+  --color-tint-green: var(--tint-green);
+  --color-note-white: var(--note-white);
+
+  --font-sans: var(--font-gsf), "Roboto Flex", system-ui, sans-serif;
+  --font-mono: var(--font-gsc), ui-monospace, monospace;
+
+  --shadow-search: var(--shadow-search);
+  --shadow-float: var(--shadow-float);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 28px;
+  --radius-2xl: 48px;
+}
+
+/* ---------- Base ---------- */
+html {
+  background: var(--surface);
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+/* Text fields show focus through their container (search shadow, compose rows), not a ring. */
+:focus-visible:not(input[type="text"], input[type="email"], input:not([type]), textarea) {
+  outline: 3px solid var(--g-blue);
+  outline-offset: 2px;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ---------- Type helpers ---------- */
+.soft {
+  font-variation-settings: "ROND" var(--rond);
+  transition:
+    --rond 300ms var(--ease-emphasized),
+    font-weight 300ms var(--ease-emphasized);
+}
+.soft:hover,
+.soft:focus-visible,
+.group:hover .soft-in-group {
+  --rond: 100;
+}
+.soft-in-group {
+  font-variation-settings: "ROND" var(--rond);
+  transition: --rond 300ms var(--ease-emphasized);
+}
+
+.headline-l {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 500;
+  line-height: 1.1;
+  font-stretch: 110%;
+  letter-spacing: -0.02em;
+}
+.headline-m {
+  font-size: clamp(28px, 3.2vw, 40px);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- State layers (M3) ---------- */
+.state {
+  position: relative;
+  isolation: isolate;
+}
+.state::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms var(--ease-emphasized);
+  z-index: -1;
+}
+.state:hover::after {
+  opacity: 0.08;
+}
+.state:focus-visible::after {
+  opacity: 0.1;
+}
+.state:active::after {
+  opacity: 0.12;
+}
+.state:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+.state:disabled::after {
+  opacity: 0;
+}
+
+/* Links in results: underline draws left to right */
+.draw-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 200ms var(--ease-emphasized);
+}
+.group:hover .draw-underline,
+.draw-underline:hover,
+.draw-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* ---------- Loading dots ---------- */
+.dot-wave span {
+  display: inline-block;
+  border-radius: 9999px;
+  animation: dot-wave 900ms var(--ease-emphasized) infinite;
+}
+.dot-wave span:nth-child(2) {
+  animation-delay: 90ms;
+}
+.dot-wave span:nth-child(3) {
+  animation-delay: 180ms;
+}
+.dot-wave span:nth-child(4) {
+  animation-delay: 270ms;
+}
+@keyframes dot-wave {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-60%);
+  }
+}
+
+.ai-shimmer {
+  background: var(--ai-gradient);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 1.6s linear infinite;
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-container-high) 0%, var(--surface-container-highest) 50%, var(--surface-container-high) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+.pulse-dot {
+  position: relative;
+}
+.pulse-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: inherit;
+  animation: pulse 1.8s var(--ease-decelerate) infinite;
+}
+@keyframes pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* ---------- Keep board ---------- */
+.dotted {
+  background-image: radial-gradient(var(--outline) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ---------- Easter eggs ---------- */
+html.askew #app {
+  transform: rotate(1.5deg);
+  transition: transform 600ms var(--ease-emphasized);
+}
+#app {
+  transition: transform 600ms var(--ease-emphasized);
+}
+
+/* ---------- Custom cursor ---------- */
+html.has-cursor,
+html.has-cursor a,
+html.has-cursor button,
+html.has-cursor [role="button"],
+html.has-cursor label {
+  cursor: none;
+}
+html.has-cursor input,
+html.has-cursor textarea {
+  cursor: text;
+}
+
+/* ---------- View transitions ---------- */
+/* Circular reveal for theme and seed changes */
+html.theme-reveal::view-transition-old(root),
+html.theme-reveal::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html.theme-reveal::view-transition-old(root) {
+  z-index: 0;
+}
+html.theme-reveal::view-transition-new(root) {
+  z-index: 1;
+}
+
+/* Shared element morph (result → case study) */
+::view-transition-group(.morph) {
+  animation-duration: 450ms;
+  animation-timing-function: var(--ease-emphasized);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+/* Page content fade-through */
+::view-transition-old(.page) {
+  animation: 90ms var(--ease-accelerate) both vt-fade-out;
+}
+::view-transition-new(.page) {
+  animation: 210ms var(--ease-decelerate) 120ms both vt-fade-in;
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* ---------- Boot cover (first frame of the preloader, before hydration) ---------- */
+html.booting body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  background: var(--surface);
+}
+html.booting:not(.booting-blank) body::after {
+  content: "";
+  position: fixed;
+  z-index: 59;
+  left: 50%;
+  top: 50%;
+  width: 100px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+  background:
+    radial-gradient(circle 8px at 8px 8px, var(--g-blue) 97%, transparent) 0 0 / 16px 16px no-repeat,
+    radial-gradient(circle 8px at 8px 8px, var(--g-red) 97%, transparent) 28px 0 / 16px 16px no-repeat,
+    radial-gradient(circle 8px at 8px 8px, var(--g-yellow) 97%, transparent) 56px 0 / 16px 16px no-repeat,
+    radial-gradient(circle 8px at 8px 8px, var(--g-green) 97%, transparent) 84px 0 / 16px 16px no-repeat;
 }
