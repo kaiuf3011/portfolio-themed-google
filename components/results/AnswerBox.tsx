@@ -7,16 +7,18 @@ import type { AnswerKind } from "@/lib/search";
 import { spring } from "@/lib/motion";
 import { Icon } from "@/components/Icon";
 import { useCompose } from "@/components/providers/Compose";
+import { Breathe, Cooked, EggCollection, Spinner, Sudo, TicTacToe } from "@/components/eggs/Toys";
 
 const box = "mb-6 overflow-hidden rounded-xl border border-outline";
 
-export function AnswerBox({ kind }: { kind: AnswerKind }) {
+export function AnswerBox({ kind, query }: { kind: AnswerKind; query: string }) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={spring.spatialDefault}
       aria-live="polite"
+      data-fx
       className={box}
     >
       {kind === "hire" && <Hire />}
@@ -27,6 +29,12 @@ export function AnswerBox({ kind }: { kind: AnswerKind }) {
       {kind === "hackathons" && <Wins />}
       {kind === "coin" && <Coin />}
       {kind === "die" && <Die />}
+      {kind === "tictactoe" && <TicTacToe />}
+      {kind === "spinner" && <Spinner />}
+      {kind === "breathe" && <Breathe />}
+      {kind === "sudo" && <Sudo query={query} />}
+      {kind === "cooked" && <Cooked query={query} />}
+      {kind === "eggs" && <EggCollection />}
     </motion.section>
   );
 }

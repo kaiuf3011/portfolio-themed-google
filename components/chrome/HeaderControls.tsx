@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/site";
@@ -264,5 +265,77 @@ export function ResumeLink() {
     <Link href={site.resume} target="_blank" className="state soft hidden h-10 items-center rounded-full px-3 text-[14px] text-on-surface sm:inline-flex">
       Resume
     </Link>
+  );
+}
+
+/** Google-account-style avatar: the photo, big enough to actually see, one tap away. */
+export function AccountButton() {
+  const [open, setOpen] = useState(false);
+  const wrap = useRef<HTMLDivElement>(null);
+  const compose = useCompose();
+  useDismiss(wrap, open, () => setOpen(false));
+
+  return (
+    <div ref={wrap} className="relative">
+      <motion.button
+        type="button"
+        aria-label="About Kaiuf"
+        aria-expanded={open}
+        whileHover={{ scale: 1.06 }}
+        whileTap={{ scale: 0.92 }}
+        transition={spring.spatialFast}
+        onClick={() => setOpen((o) => !o)}
+        className="ml-1 grid h-11 w-11 place-items-center rounded-full p-[3px]"
+        style={{ background: "conic-gradient(var(--g-blue) 0 25%, var(--g-red) 0 50%, var(--g-yellow) 0 75%, var(--g-green) 0)" }}
+      >
+        <span className="relative block h-full w-full overflow-hidden rounded-full border-2 border-surface">
+          <Image src={site.portrait.src} alt="" fill sizes="44px" className="object-cover object-top" />
+        </span>
+      </motion.button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            role="dialog"
+            aria-label="About Kaiuf"
+            initial={{ opacity: 0, scale: 0.9, y: -8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.12 } }}
+            transition={spring.spatialDefault}
+            style={{ originX: 1, originY: 0 }}
+            className="absolute right-0 top-14 z-50 w-[300px] rounded-2xl bg-surface-container p-5 text-center shadow-float"
+          >
+            <p className="text-[13px] text-on-surface-variant">kaiuf › about</p>
+            <motion.div
+              initial={{ scale: 0.6, rotate: -8 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ ...spring.spatialDefault, delay: 0.05 }}
+              className="relative mx-auto mt-3 h-36 w-36 overflow-hidden rounded-full p-1"
+              style={{ background: "conic-gradient(var(--g-blue) 0 25%, var(--g-red) 0 50%, var(--g-yellow) 0 75%, var(--g-green) 0)" }}
+            >
+              <span className="relative block h-full w-full overflow-hidden rounded-full border-4 border-surface-container">
+                <Image src={site.portrait.src} alt={site.portrait.alt} fill sizes="144px" className="object-cover object-top" />
+              </span>
+            </motion.div>
+            <p className="mt-3 text-[22px] font-medium">Hi, I&apos;m Kaiuf!</p>
+            <p className="text-[14px] text-on-surface-variant">{site.descriptor}</p>
+            <div className="mt-4 flex justify-center gap-2">
+              <button
+                type="button"
+                onClick={(e) => {
+                  setOpen(false);
+                  compose.open({ origin: e.currentTarget });
+                }}
+                className="state soft h-10 rounded-full bg-primary px-5 text-[14px] font-medium text-on-primary"
+              >
+                Say hi
+              </button>
+              <a href={site.resume} target="_blank" rel="noreferrer" className="state soft inline-flex h-10 items-center rounded-full border border-outline px-5 text-[14px] font-medium text-primary">
+                Resume
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

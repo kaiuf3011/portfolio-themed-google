@@ -4,6 +4,7 @@ import { Providers } from "@/components/providers/Providers";
 import { site } from "@/content/site";
 import { themeInitScript } from "@/lib/theme";
 import "./globals.css";
+import { InlineScript } from "@/components/InlineScript";
 
 const sans = Google_Sans_Flex({
   subsets: ["latin"],
@@ -37,7 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${sans.variable} ${code.variable}`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <InlineScript html={themeInitScript} />
       </head>
       <body>
         <Providers>

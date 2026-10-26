@@ -64,7 +64,15 @@ export function Wordmark({ size = "display", drop = false }: { size?: "display" 
       }}
     >
       {LETTERS.map((l, i) => (
-        <motion.span key={i} data-letter={display ? i : undefined} custom={i} animate={controls} style={{ color: l.color, display: "inline-block" }} aria-hidden>
+        <motion.span
+          key={i}
+          data-letter={display ? i : undefined}
+          custom={i}
+          animate={controls}
+          whileHover={display ? { y: -12, rotate: i % 2 ? 8 : -8, transition: spring.spatialFast } : undefined}
+          style={{ color: l.color, display: "inline-block" }}
+          aria-hidden
+        >
           {l.ch}
         </motion.span>
       ))}

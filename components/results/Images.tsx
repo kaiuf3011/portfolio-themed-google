@@ -3,6 +3,7 @@
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { photos, type Photo } from "@/content/site";
 import { spring } from "@/lib/motion";
 import { Icon } from "@/components/Icon";
@@ -10,7 +11,7 @@ import { Icon } from "@/components/Icon";
 /** Inline "Images" row inside All results. */
 export function ImagesStrip({ onMore }: { onMore: () => void }) {
   return (
-    <section aria-label="Images" className="my-6">
+    <section data-fx aria-label="Images" className="my-6">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-[20px] font-normal">Images</h2>
         <button type="button" onClick={onMore} className="state rounded-full px-3 py-1.5 text-[14px] font-medium text-primary">
@@ -107,8 +108,15 @@ export function ImagesTab() {
   );
 }
 
-function Lightbox({ photo, onClose, onStep }: { photo: Photo; onClose: () => void; onStep: (d: number) => void }) {
-  return (
+export function Lightbox({ photo, onClose, onStep, layoutPrefix = "photo" }: { photo: Photo; onClose: () => void; onStep?: (d: number) => void; layoutPrefix?: string }) {
+  useEffect(() => {
+    if (onStep) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose, onStep]);
+  // Portalled so no ancestor's stacking context or sticky header can sit on top of it.
+  return createPortal(
     <motion.div className="fixed inset-0 z-[65] flex items-center justify-center p-4 sm:p-10" role="dialog" aria-modal="true" aria-label={photo.caption}>
       <motion.button
         type="button"
@@ -122,7 +130,7 @@ function Lightbox({ photo, onClose, onStep }: { photo: Photo; onClose: () => voi
       />
       <figure className="relative flex max-h-full w-full max-w-5xl flex-col items-center">
         <motion.div
-          layoutId={`photo-${photo.src}`}
+          layoutId={`${layoutPrefix}-${photo.src}`}
           transition={spring.spatialDefault}
           className="relative w-full overflow-hidden rounded-lg"
           style={{ aspectRatio: `${photo.width}/${photo.height}`, maxHeight: "78vh", maxWidth: `calc(78vh * ${photo.width / photo.height})` }}
@@ -133,7 +141,7 @@ function Lightbox({ photo, onClose, onStep }: { photo: Photo; onClose: () => voi
           {photo.caption}
         </motion.figcaption>
       </figure>
-      {[-1, 1].map((d) => (
+      {onStep && [-1, 1].map((d) => (
         <motion.button
           key={d}
           type="button"
@@ -147,6 +155,7 @@ function Lightbox({ photo, onClose, onStep }: { photo: Photo; onClose: () => voi
           <Icon name={d < 0 ? "arrowBack" : "arrowForward"} />
         </motion.button>
       ))}
-    </motion.div>
+    </motion.div>,
+    document.body,
   );
 }

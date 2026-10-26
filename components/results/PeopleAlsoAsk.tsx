@@ -14,7 +14,7 @@ export function PeopleAlsoAsk({ onTab }: { onTab: (tab: "skills") => void }) {
   const id = useId();
 
   return (
-    <section aria-labelledby={`${id}-h`} className="my-6">
+    <section data-fx aria-labelledby={`${id}-h`} className="my-6">
       <h2 id={`${id}-h`} className="mb-2 text-[20px] font-normal">
         People also ask
       </h2>

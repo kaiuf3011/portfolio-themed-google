@@ -1,4 +1,5 @@
 import { SearchApp } from "@/components/search/SearchApp";
+import { InlineScript } from "@/components/InlineScript";
 
 // Runs before first paint. Covers the page with the preloader's first frame when the intro will play,
 // or with a blank surface when a ?q= is present, so the hero never flashes before hydration.
@@ -7,7 +8,7 @@ const bootScript = `(function(){try{var seen=sessionStorage.getItem("kaiuf:intro
 export default function Home() {
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: bootScript }} />
+      <InlineScript html={bootScript} />
       <SearchApp />
     </>
   );

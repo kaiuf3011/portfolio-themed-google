@@ -3,14 +3,19 @@
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { relatedSearches, site } from "@/content/site";
-import { formatSeconds, interpret, isTab, searchProjects, tabs, type Egg, type Tab } from "@/lib/search";
+import { formatSeconds, interpret, isTab, searchProjects, tabs, type Tab } from "@/lib/search";
+import { discover, type Effect } from "@/lib/eggs";
+import { confetti } from "@/lib/confetti";
+import { gravity, snap } from "@/components/eggs/effects";
+import { CatWalk, MatrixRain } from "@/components/eggs/Overlays";
+import { originOf, useTheme } from "@/components/providers/Theme";
 import { prefersReducedMotion, spring } from "@/lib/motion";
 import { SearchBar, type SearchBarHandle } from "@/components/search/SearchBar";
 import { Wordmark } from "@/components/hero/Wordmark";
 import { Doodle } from "@/components/hero/Doodle";
 import { Preloader } from "@/components/hero/Preloader";
 import { Lucky } from "@/components/hero/Lucky";
-import { AppsLauncher, ContactButton, ResumeLink, SeedPicker, ThemeToggle } from "@/components/chrome/HeaderControls";
+import { AccountButton, AppsLauncher, ContactButton, ResumeLink, SeedPicker, ThemeToggle } from "@/components/chrome/HeaderControls";
 import { Footer } from "@/components/chrome/Footer";
 import { ResultBlock } from "@/components/results/ResultBlock";
 import { KnowledgePanel } from "@/components/results/KnowledgePanel";
@@ -68,6 +73,8 @@ export function SearchApp() {
   const [drop, setDrop] = useState(false);
   const [lucky, setLucky] = useState<{ x: number; y: number } | null>(null);
   const [rush, setRush] = useState(false);
+  const [overlay, setOverlay] = useState<"cat" | "matrix" | null>(null);
+  const theme = useTheme();
   const bar = useRef<SearchBarHandle>(null);
   const snackbar = useSnackbar();
 
@@ -107,11 +114,19 @@ export function SearchApp() {
   }, []);
 
   const runEgg = useCallback(
-    (egg: Egg) => {
+    (egg: Effect) => {
+      // Light switch is a real setting, so it works even with reduced motion.
+      if (egg === "lights-on" || egg === "lights-off") {
+        if ((egg === "lights-off") !== (theme.mode === "dark")) theme.toggleMode(originOf(document.querySelector('[aria-label*="theme"]')));
+        snackbar.show({ message: egg === "lights-off" ? "Lights off. Easier on the eyes." : "Lights on. Good morning." });
+        return;
+      }
       if (prefersReducedMotion()) {
         snackbar.show({ message: "Reduced motion is on, so imagine that just happened. It was great." });
         return;
       }
+      // Effects that act on results wait for the results page to finish arriving.
+      const later = (fn: () => void, ms = 650) => setTimeout(fn, ms);
       if (egg === "barrel") {
         document.getElementById("app")?.animate([{ transform: "rotate(0)" }, { transform: "rotate(360deg)" }], { duration: 1100, easing: "cubic-bezier(0.2, 0, 0, 1)" });
       } else if (egg === "askew") {
@@ -119,17 +134,38 @@ export function SearchApp() {
       } else if (egg === "scatter") {
         window.dispatchEvent(new CustomEvent("kaiuf:scatter"));
       } else if (egg === "circle") {
-        setTimeout(() => setRush(true), 500);
+        later(() => setRush(true), 500);
+      } else if (egg === "upside") {
+        document.documentElement.classList.toggle("upside");
+        snackbar.show({ message: "G'day. Search it again to flip back.", duration: 4000 });
+      } else if (egg === "gravity") {
+        later(() => gravity());
+      } else if (egg === "snap") {
+        later(() => {
+          snap();
+          setTimeout(() => snackbar.show({ message: "Reversed with the time stone. Everything's back." }), 3600);
+        });
+      } else if (egg === "party") {
+        later(() => {
+          [0.2, 0.5, 0.8].forEach((x, i) => setTimeout(() => confetti(innerWidth * x, innerHeight * 0.75), i * 180));
+          setTimeout(() => confetti(innerWidth / 2, innerHeight * 0.4), 700);
+          window.dispatchEvent(new CustomEvent("kaiuf:dance"));
+        }, 300);
+      } else if (egg === "cat") {
+        later(() => setOverlay("cat"), 300);
+      } else if (egg === "matrix") {
+        setOverlay("matrix");
       }
     },
-    [snackbar],
+    [snackbar, theme],
   );
 
   const submit = useCallback(
     (raw: string) => {
       const query = raw.trim();
       const it = interpret(query);
-      if (it.egg) runEgg(it.egg);
+      if (it.effect) runEgg(it.effect);
+      if (it.eggId) discover(it.eggId);
       const nextTab: Tab = it.tab ?? (tab === "projects" && mode === "results" && !it.answer ? "projects" : "all");
       setInput(query);
       navigate(query, nextTab, mode === "hero" || query !== q ? "push" : "replace");
@@ -137,6 +173,12 @@ export function SearchApp() {
     },
     [mode, q, tab, runEgg],
   );
+
+  useEffect(() => {
+    const onSearch = (e: Event) => submit((e as CustomEvent<string>).detail);
+    window.addEventListener("kaiuf:search", onSearch);
+    return () => window.removeEventListener("kaiuf:search", onSearch);
+  }, [submit]);
 
   const goTab = useCallback(
     (t: string) => {
@@ -148,6 +190,7 @@ export function SearchApp() {
   );
 
   const closeLucky = useCallback(() => setLucky(null), []);
+  const clearOverlay = useCallback(() => setOverlay(null), []);
 
   const goHome = () => {
     navigate(null, "all", "push");
@@ -176,6 +219,8 @@ export function SearchApp() {
       )}
       <AnimatePresence>{lucky && <Lucky origin={lucky} onClose={closeLucky} />}</AnimatePresence>
       {rush && <CircleRush onDone={() => setRush(false)} />}
+      {overlay === "cat" && <CatWalk onDone={clearOverlay} />}
+      {overlay === "matrix" && <MatrixRain onDone={clearOverlay} />}
     </LayoutGroup>
   );
 }
@@ -208,7 +253,10 @@ function Hero({
           <ResumeLink />
           <ThemeToggle />
           <AppsLauncher onTab={onTab} />
-          <ContactButton />
+          <span className="hidden sm:block">
+            <ContactButton />
+          </span>
+          <AccountButton />
         </div>
       </header>
 
@@ -307,6 +355,7 @@ function Results({
             <span className="hidden sm:block">
               <ContactButton />
             </span>
+            <AccountButton />
           </div>
         </div>
         <nav aria-label="Result types" className="mx-auto max-w-[1400px] px-4 lg:grid lg:grid-cols-[150px_minmax(0,692px)_1fr] lg:gap-x-4 lg:px-8">
@@ -351,10 +400,11 @@ function Results({
               <div className="lg:grid lg:grid-cols-[150px_minmax(0,692px)_minmax(0,400px)] lg:gap-x-4 xl:gap-x-[72px]">
                 <div className="lg:col-start-2">
                   <div className="lg:hidden">{tab === "all" && <KnowledgePanel compact />}</div>
-                  <p className="mb-3 text-[14px] text-on-surface-variant" aria-live="polite">
+                  <p data-fx className="mb-3 text-[14px] text-on-surface-variant" aria-live="polite">
                     About {hits.length} {hits.length === 1 ? "result" : "results"} ({formatSeconds(seconds)})
                   </p>
-                  {tab === "all" && committed.answer && input === q && <AnswerBox kind={committed.answer} />}
+                  {committed.didYouMean && input === q && <DidYouMean text={committed.didYouMean} corrected={committed.corrected} onPick={submit} />}
+                  {tab === "all" && committed.answer && input === q && <AnswerBox kind={committed.answer} query={q} />}
                   {tab === "all" && !committed.answer && generic && <FeaturedSnippet />}
 
                   {hits.length === 0 && !committed.answer && <Empty query={input} onSuggest={submit} />}
@@ -391,9 +441,20 @@ function Results({
   );
 }
 
+function DidYouMean({ text, corrected, onPick }: { text: string; corrected: boolean; onPick: (q: string) => void }) {
+  return (
+    <p className="-mt-1 mb-4 text-[18px]">
+      <span className="text-g-red">{corrected ? "Showing results for" : "Did you mean:"}</span>{" "}
+      <button type="button" onClick={() => onPick(text)} className="font-semibold italic text-link underline-offset-4 hover:underline">
+        {text}
+      </button>
+    </p>
+  );
+}
+
 function FeaturedSnippet() {
   return (
-    <section aria-label="Who is Kaiuf?" className="mb-6 rounded-xl border border-outline p-5">
+    <section data-fx aria-label="Who is Kaiuf?" className="mb-6 rounded-xl border border-outline p-5">
       <p className="text-[14px] text-on-surface-variant">Who is Kaiuf?</p>
       <p className="mt-2 text-[18px] leading-[1.55]">
         An <b className="font-semibold">engineer by curiosity and a builder by instinct</b>, who turns ambitious ideas into working prototypes, and isn&apos;t afraid to break them to find out why.
@@ -428,7 +489,7 @@ function Empty({ query, onSuggest }: { query: string; onSuggest: (q: string) => 
 
 function Related({ onPick }: { onPick: (q: string) => void }) {
   return (
-    <section aria-label="Related searches" className="mt-8">
+    <section data-fx aria-label="Related searches" className="mt-8">
       <h2 className="mb-3 text-[20px] font-normal">Related searches</h2>
       <div className="grid gap-2 sm:grid-cols-2">
         {relatedSearches.map((r) => (

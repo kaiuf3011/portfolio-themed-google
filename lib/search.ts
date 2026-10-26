@@ -1,4 +1,5 @@
 import { projects, suggestions, type Project } from "@/content/site";
+import { detectEgg, type ToyAnswer } from "@/lib/eggs";
 
 export type Tab = "all" | "projects" | "images" | "journey" | "skills" | "ask";
 export const tabs: { id: Tab; label: string }[] = [
@@ -11,8 +12,7 @@ export const tabs: { id: Tab; label: string }[] = [
 ];
 export const isTab = (v: unknown): v is Tab => tabs.some((t) => t.id === v);
 
-export type AnswerKind = "hire" | "resume" | "cgpa" | "contact" | "hackathons" | "coin" | "die" | "education";
-export type Egg = "barrel" | "askew" | "circle" | "scatter";
+export type AnswerKind = "hire" | "resume" | "cgpa" | "contact" | "hackathons" | "education" | ToyAnswer;
 
 const STOP = new Set(
   "kaiuf kaiufs kaiuf's is the a an and or of for to what who how does did do show me his he by in on with that actually anything about i can are was find search".split(" "),
@@ -44,8 +44,6 @@ const TAB_WORDS: [RegExp, Tab][] = [
 ];
 
 const ANSWERS: [RegExp, AnswerKind][] = [
-  [/flip a coin|coin ?flip|heads or tails/, "coin"],
-  [/roll a (die|dice)|\bdice\b|roll the die/, "die"],
   [/\b(hire|hiring|available|availability|intern|internships?|freelance|job)\b/, "hire"],
   [/\b(resume|cv)\b/, "resume"],
   [/\b(cgpa|gpa|grades?|marks)\b/, "cgpa"],
@@ -60,19 +58,17 @@ const ROUTING_WORDS = new Set(
 );
 
 export function interpret(raw: string) {
-  const q = raw.trim().toLowerCase();
-  let egg: Egg | undefined;
-  if (/do a barrel roll|z or r twice/.test(q)) egg = "barrel";
-  else if (/^askew$|^tilt$/.test(q)) egg = "askew";
-  else if (/circle rush/.test(q)) egg = "circle";
-  else if (/^(kaiuf\s*){3,}$/.test(q)) egg = "scatter";
+  const egg = detectEgg(raw);
+  // A pure typo fix ("kaif projects") searches the corrected query, Google-style.
+  const corrected = !!egg.didYouMean && !egg.id;
+  const q = (corrected ? egg.didYouMean! : raw).trim().toLowerCase();
+  const playful = !!(egg.id || egg.toy);
 
-  const tab = TAB_WORDS.find(([re]) => re.test(q))?.[1];
-  const answer = ANSWERS.find(([re]) => re.test(q))?.[1];
+  const tab = playful ? undefined : TAB_WORDS.find(([re]) => re.test(q))?.[1];
+  const answer: AnswerKind | undefined = egg.toy ?? ANSWERS.find(([re]) => re.test(q))?.[1];
   // Eggs and toys aren't real searches: show everything underneath them.
-  const toy = !!egg || answer === "coin" || answer === "die";
-  const filterTerms = toy ? [] : terms(q).filter((t) => !ROUTING_WORDS.has(t));
-  return { tab, answer, egg, filterTerms };
+  const filterTerms = playful ? [] : terms(q).filter((t) => !ROUTING_WORDS.has(t));
+  return { tab, answer, effect: egg.effect, eggId: egg.id, didYouMean: egg.didYouMean, corrected, filterTerms };
 }
 
 type Hit = { project: Project; score: number; matched: string[] };

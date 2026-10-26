@@ -23,6 +23,7 @@ export function ResultBlock({ project, terms, index }: { project: Project; terms
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0, transition: { ...spring.spatialDefault, delay: 0.06 + index * 0.03 } }}
       data-result
+      data-fx
       className="group relative -mx-4 flex gap-5 rounded-xl px-4 py-4 transition-colors duration-200 hover:bg-surface-container"
     >
       <div className="min-w-0 flex-1">
