@@ -1,7 +1,7 @@
 // Material-expressive-style shapes as radial functions r(θ) in [0, 1].
 // Sampling every shape at the same angles makes any two shapes morphable by lerping radii.
 
-export type ShapeName = "circle" | "cookie" | "sunny" | "burst" | "clover" | "softBurst" | "pill" | "gem";
+export type ShapeName = "circle" | "cookie" | "sunny" | "burst" | "clover" | "softBurst" | "square" | "gem";
 
 const N = 90;
 const TAU = Math.PI * 2;
@@ -16,14 +16,8 @@ const radial: Record<ShapeName, (t: number) => number> = {
   clover: (t) => 0.6 + 0.4 * Math.pow(Math.abs(Math.cos(2 * t)), 0.7),
   softBurst: (t) => 0.84 + 0.16 * Math.cos(10 * t),
   gem: (t) => 0.86 + 0.14 * Math.pow(Math.abs(Math.cos(3 * t)), 3),
-  pill: (t) => {
-    const a = 1;
-    const b = 0.6;
-    const n = 4;
-    const c = Math.abs(Math.cos(t)) / a;
-    const s = Math.abs(Math.sin(t)) / b;
-    return Math.min(1, Math.pow(Math.pow(c, n) + Math.pow(s, n), -1 / n));
-  },
+  // Soft four-sided cookie with its corners on the diagonals, so it reads as a rounded square.
+  square: (t) => 0.9 - 0.1 * Math.cos(4 * t),
 };
 
 export const shapeNames = Object.keys(radial) as ShapeName[];

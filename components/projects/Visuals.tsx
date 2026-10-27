@@ -27,7 +27,7 @@ const THUMB_SHAPE: Record<string, ShapeName> = {
   "jharkhand-safety-ar": "gem",
   seismora: "clover",
   "the-knight": "softBurst",
-  "mbbs-study-assistant": "pill",
+  "mbbs-study-assistant": "square",
 };
 
 /** Small shape-masked emblem shown on the right of a search result. */
