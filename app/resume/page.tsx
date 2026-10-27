@@ -126,7 +126,7 @@ export default function ResumePage() {
                   {i === 0 && <span className="absolute inset-x-0 bottom-0 h-[2px] rounded-t-full" style={{ background: "#1a73e8" }} />}
                 </span>
               ))}
-              <span className="ml-auto pb-[1.8mm] text-[8.4px]">About 6 projects (CGPA 9.04)</span>
+              <span className="ml-auto pb-[1.8mm] text-[8.4px]">About 5 projects (CGPA 9.04)</span>
             </div>
           </header>
 

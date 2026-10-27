@@ -1,8 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import Image from "next/image";
-import { useState } from "react";
 import type { Project } from "@/content/site";
 import { shapePath, type ShapeName } from "@/lib/shapes";
 import { spring } from "@/lib/motion";
@@ -27,7 +26,6 @@ const THUMB_SHAPE: Record<string, ShapeName> = {
   "jharkhand-safety-ar": "gem",
   seismora: "clover",
   "the-knight": "softBurst",
-  "mbbs-study-assistant": "square",
 };
 
 /** Small shape-masked emblem shown on the right of a search result. */
@@ -87,14 +85,6 @@ function Emblem({ slug }: { slug: string }) {
           <rect x="10" y="4" width="1" height="6" fill="#dadce0" />
         </svg>
       );
-    case "mbbs-study-assistant":
-      return (
-        <svg viewBox="0 0 48 48" width="52" height="52" aria-hidden>
-          <rect x="10" y="8" width="28" height="20" rx="4" fill="currentColor" opacity=".35" transform="rotate(-8 24 18)" />
-          <rect x="8" y="16" width="32" height="22" rx="4" fill="currentColor" />
-          <path d="M24 21v12M18 27h12" stroke="#fff" strokeWidth="3" strokeLinecap="round" />
-        </svg>
-      );
     default:
       return null;
   }
@@ -118,8 +108,6 @@ export function ProjectVisual({ project }: { project: Project }) {
           <KnightGame />
         </div>
       );
-    case "mbbs-study-assistant":
-      return <FlashcardVisual className={box} />;
     default:
       return null;
   }
@@ -247,57 +235,6 @@ function SeismoraVisual({ className, project }: { className: string; project: Pr
         <text x="100" y="10" textAnchor="middle" fontSize="9" fill="currentColor" fontFamily="var(--font-gsc)">Ø socket</text>
         <text x="100" y="156" textAnchor="middle" fontSize="9" fill="var(--g-green)" fontFamily="var(--font-gsc)">soft insert</text>
       </svg>
-    </div>
-  );
-}
-
-const CARDS = [
-  { q: "Which nerve innervates the deltoid?", a: "Axillary nerve (C5–C6)" },
-  { q: "Name the branches of the brachial plexus.", a: "Roots, trunks, divisions, cords, branches — the full answer comes from your own textbook." },
-];
-
-function FlashcardVisual({ className }: { className: string }) {
-  const [i, setI] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const card = CARDS[i];
-  return (
-    <div className={`${className} grid aspect-[16/9] place-items-center bg-tint-red p-6`}>
-      <div className="relative w-full max-w-[420px]" style={{ perspective: 1000 }}>
-        <div className="absolute inset-0 translate-x-3 translate-y-3 rotate-2 rounded-xl bg-surface/60" aria-hidden />
-        <motion.button
-          type="button"
-          data-cursor={flipped ? "Next" : "Flip"}
-          aria-label={flipped ? "Show next card" : "Flip card to see the answer"}
-          onClick={() => {
-            if (flipped) {
-              setFlipped(false);
-              setI((x) => (x + 1) % CARDS.length);
-            } else setFlipped(true);
-          }}
-          animate={{ rotateY: flipped ? 180 : 0 }}
-          transition={spring.spatialDefault}
-          className="relative h-[180px] w-full rounded-xl text-left"
-          style={{ transformStyle: "preserve-3d" }}
-        >
-          <span className="absolute inset-0 flex flex-col justify-between rounded-xl bg-surface p-5 shadow-float" style={{ backfaceVisibility: "hidden" }}>
-            <span className="text-[12px] font-medium text-g-red">Question</span>
-            <AnimatePresence mode="wait">
-              <motion.span key={card.q} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-[20px] font-medium leading-snug">
-                {card.q}
-              </motion.span>
-            </AnimatePresence>
-            <span className="text-[12px] text-on-surface-variant">Tap to flip</span>
-          </span>
-          <span
-            className="absolute inset-0 flex flex-col justify-between rounded-xl bg-[#202124] p-5 text-white shadow-float"
-            style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
-          >
-            <span className="text-[12px] font-medium text-[#f28b82]">Answer</span>
-            <span className="text-[20px] font-medium leading-snug">{card.a}</span>
-            <span className="text-[12px] text-white/60">Tap for next</span>
-          </span>
-        </motion.button>
-      </div>
     </div>
   );
 }

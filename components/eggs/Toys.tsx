@@ -246,7 +246,7 @@ export function Sudo({ query }: { query: string }) {
 
 // ---------- Vibe check ----------
 const VIBES: [RegExp, string][] = [
-  [/cooked/, "Not cooked. Actively cooking: Aphelion AI and an MBBS study assistant are on the stove."],
+  [/cooked/, "Not cooked. Actively cooking: Aphelion AI is on the stove."],
   [/rizz/, "Unspoken rizz. Ships the prototype, lets the demo do the talking."],
   [/aura/, "Aura farming since day one: 10+ hackathons and a Best Performing Team trophy."],
   [/no cap/, "No cap: 9.04 CGPA while shipping side projects."],

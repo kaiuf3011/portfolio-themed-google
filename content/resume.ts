@@ -55,13 +55,6 @@ export const resume = {
       bullets: ["Unity / C# platformer covering player movement, collision handling and level design."],
       stack: ["Unity", "C#"],
     },
-    {
-      slug: "mbbs-study-assistant",
-      title: "MBBS AI Study Assistant",
-      status: "In development",
-      bullets: ["RAG study platform for medical students; planned document Q&A, AI tutor and flashcards."],
-      stack: ["Python", "FastAPI", "Vector DB", "PWA"],
-    },
   ],
   achievements: [
     { title: "Best Performing Team", detail: "SIH 2026 IDE Bootcamp, Thiagarajar College of Engineering, Madurai (May 2026)", color: "#fbbc04" },

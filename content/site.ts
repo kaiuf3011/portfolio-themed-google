@@ -34,7 +34,7 @@ export const about = {
     { value: "10+", label: "Hackathons" },
     { value: "2", label: "SIH projects" },
     { value: "9.04", label: "CGPA" },
-    { value: "6", label: "Featured builds" },
+    { value: "5", label: "Featured builds" },
   ],
   education: {
     degree: "B.E. Computer Science & Engineering (AI & ML)",
@@ -274,39 +274,6 @@ export const projects: Project[] = [
     cta: "Watch gameplay",
     links: [],
   },
-  {
-    slug: "mbbs-study-assistant",
-    name: "MBBS Study Assistant",
-    title: "MBBS AI Study Assistant — a study partner built on your own textbooks",
-    category: "AI and EdTech",
-    color: "red",
-    status: "In development",
-    tags: ["Python", "FastAPI", "Vector DB", "PWA"],
-    keywords: ["medical", "mbbs", "study", "flashcards", "tutor", "rag", "edtech", "ai", "agents", "education"],
-    snippet:
-      "An AI study partner for medical students, built on their own textbooks. Planned: document Q&A, an AI tutor, flashcard generation and case-based practice.",
-    outcome: "A RAG study platform for medical students, in development.",
-    facts: [
-      { label: "Status", value: "In development" },
-      { label: "Stack", value: "Python, FastAPI, vector DB, PWA" },
-      { label: "For", value: "Medical students" },
-    ],
-    sections: [
-      {
-        id: "overview",
-        heading: "What it is",
-        body: ["An AI study partner for medical students that answers from their own textbooks, not the open internet."],
-      },
-      {
-        id: "next",
-        heading: "What's planned",
-        body: ["The roadmap, in order of build."],
-        flow: ["Document Q&A", "AI tutor", "Flashcard generation", "Case-based practice"],
-      },
-    ],
-    cta: "Follow progress",
-    links: [],
-  },
 ];
 
 export type Milestone = {
@@ -326,7 +293,7 @@ export const journey: Milestone[] = [
   { id: "tedx", when: "Community", title: "Moderator at TEDxRTC", detail: "Kept the conversation alive between speakers and audience.", kind: "experience", photo: "/images/tedx.jpg" },
   { id: "ggj", when: "2026", title: "Global Game Jam 2026", detail: "A weekend of building games at the Kerala site.", kind: "project", photo: "/images/ggj-2026.jpg" },
   { id: "sih26", when: "May 2026", title: "Best Performing Team", detail: "SIH 2026 IDE Bootcamp, Thiagarajar College of Engineering, Madurai.", kind: "win", photo: "/images/sih-2026-win.jpg" },
-  { id: "now", when: "Now", title: "Building in public", detail: "Aphelion AI, the MBBS study assistant, and a game-dev community for student builders.", kind: "project" },
+  { id: "now", when: "Now", title: "Building in public", detail: "Aphelion AI and a game-dev community for student builders.", kind: "project" },
 ];
 
 export type SkillNote = { id: string; title: string; color: BrandColor | "white"; items: string[] };
